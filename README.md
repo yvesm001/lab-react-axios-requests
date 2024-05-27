@@ -27,7 +27,14 @@ In this exercise, you'll create a React application using Vite and Axios to make
    npm install axios react-router-dom
    ```
 
-### 3. Clear Initial Structure
+### 3. Start the Application
+
+1. Run the application:
+   ```bash
+   npm run dev
+   ```
+
+### 4. Clear Initial Structure
 
 1. Open `src/App.jsx` and clear its content. Replace it with a basic functional component:
 
@@ -60,16 +67,25 @@ In this exercise, you'll create a React application using Vite and Axios to make
    );
    ```
 
-### 4. Create Components and Pages Folder
+### 5. Create Components and Pages Folder
 
 1. Create `components` and `pages` folders inside `src`:
-   ```bash
-   mkdir src/components src/pages
-   ```
+
+- src/components
+- src/pages
+
+2. Create Homepage and PostDetails under `pages`
+
+- src/pages/Homepage.jsx
+- src/pages/PostDetails.jsx
+
+3. Create PostList under `components`
+
+- src/components/PostList.jsx
 
 ## Application Setup
 
-### 5. Configure React Router
+### 6. Configure React Router
 
 1. Open `src/main.jsx` and set up BrowserRouter:
 
@@ -88,140 +104,36 @@ In this exercise, you'll create a React application using Vite and Axios to make
    );
    ```
 
-### 6. Define Routes and Create Page Components
+### 7. Define Routes in App.jsx
 
-1. Create `src/pages/Homepage.jsx`:
+1. Create routes to render Homepage.jsx and PostDetails.jsx
 
-   ```jsx
-   import React from "react";
-   import PostList from "../components/PostList";
+| Path               | Element          |
+| ------------------ | ---------------- |
+| `"/"`              | `<Homepage/>`    |
+| `"/posts/:postId"` | `<PostDetails/>` |
 
-   function Homepage({ posts }) {
-     return (
-       <div>
-         <h1>Homepage</h1>
-         <PostList posts={posts} />
-       </div>
-     );
-   }
+### 8. Render `PostList` component in the `Homepage` page
 
-   export default Homepage;
-   ```
+### 9. Set Up State and Fetch Data in App.jsx
 
-2. Create `src/pages/PostDetails.jsx`:
+1. Create a asynchronous function that makes a `GET` request using `axios` to the JSONPlaceholder api.
+   - https://jsonplaceholder.typicode.com/posts
+2. Store the response data in a state
+3. Send the state as props to the `PostList` component
 
-   ```jsx
-   import React, { useEffect, useState } from "react";
-   import { useParams } from "react-router-dom";
-   import axios from "axios";
+### 10. In `PostList` component, render the list of posts
 
-   function PostDetails() {
-     const { postId } = useParams();
-     const [post, setPost] = useState(null);
+1. Make sure to receive the state in the props
+2. Use the state to conditionally render (i.e: state ? render posts : loading)
+3. Render post title, body and id
+4. Each post should be embraced with a link taking to `/posts/postId`
 
-     useEffect(() => {
-       const fetchPost = async () => {
-         try {
-           const response = await axios.get(
-             `https://jsonplaceholder.typicode.com/posts/${postId}`
-           );
-           setPost(response.data);
-         } catch (error) {
-           console.error("Error fetching post:", error);
-         }
-       };
+### 11. In `PostDetails` page, render post information
 
-       fetchPost();
-     }, [postId]);
-
-     return (
-       <div>
-         {post ? (
-           <div>
-             <h1>{post.title}</h1>
-             <p>{post.body}</p>
-           </div>
-         ) : (
-           <p>Loading...</p>
-         )}
-       </div>
-     );
-   }
-
-   export default PostDetails;
-   ```
-
-### 7. Create PostList Component
-
-1. Create `src/components/PostList.jsx`:
-
-   ```jsx
-   import React from "react";
-   import { Link } from "react-router-dom";
-
-   function PostList({ posts }) {
-     return (
-       <div>
-         {posts.map((post) => (
-           <div key={post.id}>
-             <Link to={`/posts/${post.id}`}>
-               <h2>{post.title}</h2>
-             </Link>
-           </div>
-         ))}
-       </div>
-     );
-   }
-
-   export default PostList;
-   ```
-
-### 8. Set Up State and Fetch Data in App.jsx
-
-1. Open `src/App.jsx` and modify it to fetch data and pass it as props:
-
-   ```jsx
-   import React, { useEffect, useState } from "react";
-   import { Routes, Route } from "react-router-dom";
-   import axios from "axios";
-   import Homepage from "./pages/Homepage";
-   import PostDetails from "./pages/PostDetails";
-
-   function App() {
-     const [posts, setPosts] = useState([]);
-
-     useEffect(() => {
-       const fetchPosts = async () => {
-         try {
-           const response = await axios.get(
-             "https://jsonplaceholder.typicode.com/posts"
-           );
-           setPosts(response.data);
-         } catch (error) {
-           console.error("Error fetching posts:", error);
-         }
-       };
-
-       fetchPosts();
-     }, []);
-
-     return (
-       <Routes>
-         <Route path="/" element={<Homepage posts={posts} />} />
-         <Route path="/posts/:postId" element={<PostDetails />} />
-       </Routes>
-     );
-   }
-
-   export default App;
-   ```
-
-### 9. Start the Application
-
-1. Run the application:
-   ```bash
-   npm run dev
-   ```
+1. Use `useParams()` to get the post id
+2. Use that ID to make another request to the JSONPlaceholder API to retrieve a single post
+3. Render that post details
 
 ## Optional Styling
 
